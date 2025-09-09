@@ -1,0 +1,19 @@
+## Catalog File for diseases
+## Autor: milomnz
+
+## This file uses the next syntax for describing the diseases presents in this db in format .fasta.
+## There also are ONLY three tipes of severity, low, medium, high
+## diseaseId # name # severity
+
+
+## Start of the catalog file with diseases.
+
+0001 # covid # low
+0002 # vih # # high
+0003 # lupus # high
+0004 # chlamydia # high
+0005 # epilepsy # medium
+0006 # high-blood-presure # medium
+0011 # cancer-mama # high
+0012 # cancer-lungs # high
+0013 # cancer-bowel # high
