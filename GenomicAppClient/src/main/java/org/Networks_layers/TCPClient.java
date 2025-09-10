@@ -1,9 +1,11 @@
 package org.Networks_layers;
+
 import javax.net.ssl.SSLSocketFactory;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+
 public class TCPClient {
     private String serverAddress;
     private int serverPort;
@@ -11,7 +13,7 @@ public class TCPClient {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
-    public TCPClient(String serverAddress, int serverPort){
+    public TCPClient(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
     }
@@ -23,27 +25,27 @@ public class TCPClient {
         this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
         this.dataOutputStream = new DataOutputStream(this.clientSocket.getOutputStream());
     }
-    public void sendMessage(String name, String lastName){
+
+    public void sendMessage(String message) {
         String response = "Error";
-        try{
+        try {
             this.connect();
-            String message = name+":"+lastName;
             System.out.println("Sending message: " + message);
-            this.dataOutputStream.writeUTF(message);
+            this.dataOutputStream.writeUTF(message); // Enviamos todo en un string
             response = this.dataInputStream.readUTF();
             System.out.println("Received response: " + response);
         } catch (IOException e) {
             System.out.println("Connection error: " + e.getMessage());
-        }finally {
+        } finally {
             this.closeConnection();
         }
     }
 
-    public void closeConnection(){
-        try{
-            if(this.dataInputStream != null) this.dataInputStream.close();
-            if(this.dataOutputStream != null) this.dataOutputStream.close();
-            if(this.clientSocket != null) this.clientSocket.close();
+    public void closeConnection() {
+        try {
+            if (this.dataInputStream != null) this.dataInputStream.close();
+            if (this.dataOutputStream != null) this.dataOutputStream.close();
+            if (this.clientSocket != null) this.clientSocket.close();
         } catch (IOException e) {
             System.out.println("Error closing connection: " + e.getMessage());
         }
