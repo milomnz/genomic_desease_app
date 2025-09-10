@@ -21,7 +21,6 @@ public class Main {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //this is a prube
         String certificateRoute = p.getProperty("SSL_CERTIFICATE_ROUTE");
         String certificatePassword = p.getProperty("SSL_PASSWORD");
         System.setProperty("javax.net.ssl.keyStore",certificateRoute);
