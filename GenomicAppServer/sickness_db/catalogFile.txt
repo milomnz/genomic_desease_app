@@ -8,12 +8,12 @@
 
 ## Start of the catalog file with diseases.
 
-0001 # covid # low
-0002 # vih # # high
-0003 # lupus # high
-0004 # chlamydia # high
-0005 # epilepsy # medium
-0006 # high-blood-presure # medium
-0011 # cancer-mama # high
-0012 # cancer-lungs # high
-0013 # cancer-bowel # high
+1 # covid # low
+2 # vih # # high
+3 # lupus # high
+4 # chlamydia # high
+5 # epilepsy # medium
+6 # high-blood-presure # medium
+7 # cancer-mama # high
+8 # cancer-lungs # high
+9 # cancer-bowel # high
