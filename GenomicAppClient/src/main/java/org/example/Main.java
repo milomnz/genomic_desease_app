@@ -1,25 +1,24 @@
 package org.example;
 
 import org.Networks_layers.TCPClient;
-import org.UserFile.FastaWriter;
-import org.UserFile.user;
+import org.UserFile.FastaReader;
 import org.UserFile.PatientInputHandler;
+import org.UserFile.user;
+import org.Utils.ChecksumUtil;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.nio.file.Files;
 
 public class Main {
     public static void main(String[] args) {
         Properties p = new Properties();
         try {
             p.load(new FileInputStream(new File("configuration.properties")));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -35,30 +34,45 @@ public class Main {
         System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
 
         try {
-            // Pedir datos al usuario por consola
             user user = PatientInputHandler.readFromConsole();
+            System.out.println("DEBUG -> user capturado: " + user);
 
-            // Crear el archivo FASTA dinámicamente
-            String fastaPath = user.getDocumentId() + ".fasta";
-            FastaWriter.writePatientFasta(
-                    user.getPatientId() != null ? user.getPatientId() : "TEMP_ID",
-                    user.getFullName(),
-                    user.getDocumentId(),
-                    user.getContactEmail(),
-                    user.getRegistrationDate(),
-                    user.getAge(),
-                    user.getSex(),
-                    user.getSequence(),
-                    fastaPath
+            String fastaPath = FastaReader.askAndReadFastaPath();
+            File fastaFile = new File(fastaPath);
+
+            String fastaContent = Files.readString(fastaFile.toPath())
+                    .replace("\n", "")
+                    .replace("\r", "");
+            user.setSequence(fastaContent);
+
+            String checksum = ChecksumUtil.calculateMD5(fastaFile);
+            user.setChecksumFasta(checksum);
+
+            user.setFileSizeBytes(fastaFile.length());
+
+            String message = String.join(";",
+                    safe(user.getFullName()),
+                    safe(user.getDocumentId()),
+                    String.valueOf(user.getAge()),
+                    safe(user.getContactEmail()),
+                    safe(user.getSex()),
+                    safe(user.getClinicalNotes()),
+                    safe(user.getSequence()),
+                    user.getChecksumFasta(),
+                    String.valueOf(user.getFileSizeBytes())
             );
-            System.out.println("✅ Archivo FASTA generado en: " + fastaPath);
 
-            // Enviar archivo al servidor
+            System.out.println("\nEnviando al servidor:\n" + message + "\n");
+
             TCPClient client = new TCPClient("169.254.74.251", 2020);
-            client.sendFastaFile(new File(fastaPath));
+            client.sendMessage(message);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String safe(String value) {
+        return value != null ? value : "";
     }
 }
